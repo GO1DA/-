@@ -1,25 +1,22 @@
 #pragma once
 
+#include <functional>
 #include <chrono>
 #include <cstdint>
-#include <functional>
+#include <memory>
 
-using TimePoint = std::chrono::time_point<std::chrono::system_clock>;
-
-class CallbackScheduler
-{
+class CallbackScheduler {
 public:
+    using TimePoint = std::chrono::time_point<std::chrono::system_clock>;
     using TaskId = std::uint64_t;
 
-    CallbackScheduler() = default;
-    ~CallbackScheduler() = default;
-
-    CallbackScheduler(const CallbackScheduler&) = delete;
-    CallbackScheduler& operator=(const CallbackScheduler&) = delete;
-
-    CallbackScheduler(CallbackScheduler&&) = delete;
-    CallbackScheduler& operator=(CallbackScheduler&&) = delete;
+    CallbackScheduler();
+    ~CallbackScheduler();
 
     TaskId Schedule(std::function<void()> callback, TimePoint when);
     bool Cancel(TaskId id);
+
+private:
+    class Impl;
+    std::unique_ptr<Impl> pImpl;
 };
